@@ -3,8 +3,8 @@
 ## Usage
 
 - clone the repo
-- use `git submodule update --init`
-- use `make` to start project
+- run `git submodule update --init`
+- run `make install` to start project and fetch initial containers
 
 ## Additional commands
 
