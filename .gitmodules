@@ -1,0 +1,3 @@
+[submodule "watchtower"]
+	path = watchtower
+	url = git@github.com:drupal-watchtower/sandbox.git

@@ -1,0 +1,51 @@
+version: "2"
+
+services:
+
+  php:
+    image: skilldlabs/${PHP_IMAGE} # Allowed: 7.0, 5.6.
+    container_name: "${COMPOSE_PROJECT_NAME}_php"
+#    depends_on:
+#      - mysql
+    volumes:
+      - ../web:/var/www/html:z
+      - ../watchtower:/var/www/html/sites/all/modules/custom:z
+    restart: always
+    networks:
+      - front
+
+  nginx:
+    image: wodby/drupal-nginx:7-1.12
+    container_name: "${COMPOSE_PROJECT_NAME}_web"
+    environment:
+      NGINX_STATIC_CONTENT_OPEN_FILE_CACHE: "off"
+      NGINX_ERROR_LOG_LEVEL: debug
+      NGINX_BACKEND_HOST: php
+      NGINX_SERVER_ROOT: /var/www/html
+    depends_on:
+      - php
+    volumes_from:
+      - php
+    restart: always
+    networks:
+      - front
+
+#  mysql:
+#    image: percona:5.7
+#    container_name: "${COMPOSE_PROJECT_NAME}_mysql"
+#    volumes:
+#      - /dev/shm/${COMPOSE_PROJECT_NAME}_mysql:/var/lib/mysql:Z
+#    environment:
+#      MYSQL_DATABASE: "${COMPOSE_PROJECT_NAME}"
+#      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+#    restart: always
+#    networks:
+#      - front
+
+networks:
+  front:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "${IPRANGE}"
