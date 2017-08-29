@@ -16,7 +16,7 @@ LOCAL_GID := $(shell id -g)
 CUID ?= $(LOCAL_UID)
 CGID ?= $(LOCAL_GID)
 
-COMPOSE_NET_NAME := $(shell echo $(COMPOSE_PROJECT_NAME) | tr '[:upper:]' '[:lower:]'| sed -r 's/[^a-z0-9]+//g')_front
+COMPOSE_NET_NAME := $(shell echo $(COMPOSE_PROJECT_NAME) | tr '[:upper:]' '[:lower:]'| sed -E 's/[^a-z0-9]+//g')_front
 
 php = docker-compose exec -T --user $(CUID):$(CGID) php time ${1}
 php-0 = docker-compose exec -T php time ${1}
