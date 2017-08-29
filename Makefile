@@ -3,6 +3,16 @@ $(shell cp -n \.env.default \.env)
 $(shell cp -n \.\/docker\/docker-compose\.override\.yml\.default \.\/docker\/docker-compose\.override\.yml)
 include .env
 
+# Run OS specific commands
+OS := $(shell uname)
+ifeq ($(OS),Darwin)
+    # Run MacOS commands
+    COMPOSE_NET_NAME := $(shell echo $(COMPOSE_PROJECT_NAME) | tr '[:upper:]' '[:lower:]'| sed -E 's/[^a-z0-9]+//g')_front
+else
+    # Linux and others commands
+    COMPOSE_NET_NAME := $(shell echo $(COMPOSE_PROJECT_NAME) | tr '[:upper:]' '[:lower:]'| sed -r 's/[^a-z0-9]+//g')_front
+endif
+
 DB_URL := sqlite:///dev/shm/dwt.sqlite
 
 PHPCS_EXTS := php,inc,install,module,theme,profile,info
@@ -15,8 +25,6 @@ LOCAL_GID := $(shell id -g)
 # Evaluate recursively.
 CUID ?= $(LOCAL_UID)
 CGID ?= $(LOCAL_GID)
-
-COMPOSE_NET_NAME := $(shell echo $(COMPOSE_PROJECT_NAME) | tr '[:upper:]' '[:lower:]'| sed -r 's/[^a-z0-9]+//g')_front
 
 php = docker-compose exec -T --user $(CUID):$(CGID) php time ${1}
 php-0 = docker-compose exec -T php time ${1}
